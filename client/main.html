@@ -1,0 +1,30 @@
+<head>
+  <title>webGL_memoryIssue</title>
+</head>
+
+<body>
+  {{> autoMapLoader}}
+</body>
+
+<template name="autoMapLoader">
+  <div id="auto-map-loader">
+    {{#if isShowMap}}
+      {{> map}}
+    {{/if}}
+    {{> info}}
+  </div>
+</template>
+
+<template name="map">
+  <div id="map"></div>
+</template>
+
+<template name="info">
+  <div id="info">
+    <h1>webGL_memoryIssue test</h1>
+    <p>using {{webViewEngine}}</p>
+    <p>interval duration for loading / unloading map is {{intervalTime}}ms</p>
+    <p>has received memory warning {{timesReceivedMemoryWarning}} times</p>
+    <p>map was loaded {{timesLoaded}} times</p>
+  </div>
+</template>
