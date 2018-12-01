@@ -10,15 +10,17 @@ const _timesReceivedMemoryWarning = new ReactiveVar(0);
 const _isUIWebView = new ReactiveVar(false);
 const _isWKWebView = new ReactiveVar(false);
 mapboxgl.accessToken = "pk.eyJ1Ijoid2ViZ2wtbWVtb3J5aXNzdWUiLCJhIjoiY2pwNGpzdXI1MG00eTNrcHh5MjFoNDh1MCJ9.uVEfXDntzGURpMW1cEZvOA";
-const waitTime = 20000;
+const waitTime = 5000;
 
 Template.autoMapLoader.onRendered(function(){
-	window.addEventListener("cordova-plugin-memory-alert.memoryWarning",
-		function () {
-	    	_timesReceivedMemoryWarning.set(_timesReceivedMemoryWarning.get() + 1);
-		}
-	);
-	cordova.plugins.CordovaPluginMemoryAlert.activate(true);
+	if (Meteor.isCordova) {
+		window.addEventListener("cordova-plugin-memory-alert.memoryWarning",
+			function () {
+		    	_timesReceivedMemoryWarning.set(_timesReceivedMemoryWarning.get() + 1);
+			}
+		);
+		cordova.plugins.CordovaPluginMemoryAlert.activate(true);
+	}
 
 	Meteor.setInterval(() => {
 		_isShowMap.set(!_isShowMap.get());
@@ -50,6 +52,8 @@ Template.info.helpers({
 			return "UIWebView";
 		} else if (isWKWebView) {
 			return "WKWebView";
+		} else {
+			return "undefined webViewEngine";
 		}
 	},
 
@@ -59,13 +63,15 @@ Template.info.helpers({
 });
 
 Template.info.onRendered(function() {
-	cordova.plugins.webviewEngine.isUIWebView().then(isUIWebView => {
-		_isUIWebView.set(isUIWebView);
-	});
+	if (Meteor.isCordova) {
+		cordova.plugins.webviewEngine.isUIWebView().then(isUIWebView => {
+			_isUIWebView.set(isUIWebView);
+		});
 
-	cordova.plugins.webviewEngine.isWKWebView().then(isWKWebView => {
-		_isWKWebView.set(isWKWebView);
-	});
+		cordova.plugins.webviewEngine.isWKWebView().then(isWKWebView => {
+			_isWKWebView.set(isWKWebView);
+		});
+	};
 });
 
 Template.map.onRendered(function() {
